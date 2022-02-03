@@ -30,6 +30,7 @@ import asyncio
 from avilla.core.message import Message, MessageChain
 from avilla.core.elements import Image as IMG, Text
 from avilla.core.event.message import MessageReceived
+
 saya = Saya.current()
 channel = Channel.current()
 import base64
@@ -37,7 +38,7 @@ import datetime
 import os
 import random
 from enum import Enum
-from avilla.core.execution import MessageSend 
+from avilla.core.execution import MessageSend
 from io import BytesIO
 import httpx
 from dateutil.parser import parse
@@ -51,7 +52,7 @@ except ImportError:
 
 wait_list = {}
 # ==========================================
-RESOURCES_BASE_PATH = str(Path(fr"{os.getcwd()}/resource/sign-in"))
+RESOURCES_BASE_PATH = str(Path(rf"{os.getcwd()}/resource/sign-in"))
 
 # ==========================================
 
@@ -76,14 +77,14 @@ hitokotoArchiveOpen = True
 
 
 @channel.use(ListenerSchema(listening_events=[MessageReceived]))
-async def sendmsg(rs: Relationship,msg:Message):
+async def sendmsg(rs: Relationship, msg: Message):
     if int(rs.mainline.path["group"]) in blockGroupNumber:
         return
     if not msg.content.as_display() == "签到":
         return
     userQQ = int(rs.ctx.path["member"])
     _msg = msg.content.as_display()
-    nickname = "测试" #await rs.meta.get("member.name")
+    nickname = "测试"  # await rs.meta.get("member.name")
     resp = await asyncio.to_thread(mainProgram, _msg, userQQ, nickname)
     await rs.exec(MessageSend(resp)).to(rs.mainline)
 
@@ -637,13 +638,7 @@ def mainProgram(msg, userQQ, nickname):
     if exactMatch:
         result = processing(userQQ, nickname)
         if not result == Status.FAILURE:
-            resp = MessageChain(
-                [
-                    IMG(
-                        f"{RESOURCES_BASE_PATH}/cache/{userQQ}.png"
-                    )
-                ]
-            )
+            resp = MessageChain([IMG(f"{RESOURCES_BASE_PATH}/cache/{userQQ}.png")])
             return resp
         else:
             resp = MessageChain([Text("也许你今天已经签过到了")])

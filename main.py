@@ -28,12 +28,11 @@ avilla = Avilla(
     ],
     config={
         OnebotService: {
-            entity.account['2954819930']: OnebotWsClientConfig(
-                url=URL("ws://localhost:6700/"),
-                access_token=None
+            entity.account["2954819930"]: OnebotWsClientConfig(
+                url=URL("ws://localhost:6700/"), access_token=None
             )
         }
-    }
+    },
 )
 
 
