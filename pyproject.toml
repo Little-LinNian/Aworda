@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "aworda"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+avilla-core = "1.0.0rc1"
+aiohttp = "^3.8.1"
+starlette = "^0.18.0"
+pillow = "^9.0.0"
+loguru = "^0.6.0"
+playwright = "^1.18.2"
+graia-saya = "^0.0.14"
+httpx = "^0.22.0"
+python-dateutil = "^2.8.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[[tool.poetry.source]]
+name = "tencent-cloud"
+default = false
+url = "https://mirrors.cloud.tencent.com/pypi/simple"
+
