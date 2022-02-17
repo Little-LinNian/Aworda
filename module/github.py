@@ -44,7 +44,10 @@ def countSlash(path: str):
 async def sendMsg(app: Ariadne, group: Group, path: str):
     msg = await shot_github(path)
     if msg:
-        await app.sendGroupMessage(group, msg)
+        try:
+            await app.sendGroupMessage(group, msg)
+        except Exception as e:
+            await app.sendGroupMessage(group, Plain(f"{e}"))
     else:
         await app.sendGroupMessage(group, MessageChain.create(Plain("超时啦www")))
 
@@ -140,6 +143,9 @@ async def user(app: Ariadne, arp: Arpamar, group: Group):
     if arp.matched:
         name = arp.main_args.get("username")
         slashCount = countSlash(name)
-        assert slashCount == 0
-        assert len(arp.options) == 0
+        try:
+            assert slashCount == 0
+            assert len(arp.options) == 0
+        except:
+            return
         await sendMsg(app, group, name)
