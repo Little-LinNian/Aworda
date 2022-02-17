@@ -84,7 +84,7 @@ async def sendmsg(rs: Relationship, msg: Message):
         return
     userQQ = int(rs.ctx.path["member"])
     _msg = msg.content.as_display()
-    nickname = "测试"  # await rs.meta.get("member.name")
+    nickname = await rs.meta.get("member.name")
     resp = await asyncio.to_thread(mainProgram, _msg, userQQ, nickname)
     await rs.exec(MessageSend(resp)).to(rs.mainline)
 

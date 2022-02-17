@@ -1,39 +1,33 @@
 import asyncio
-from aiohttp import ClientSession
 from graia.broadcast import Broadcast
-from yarl import URL
-from avilla.core import Avilla, event
-from avilla.io.core.aiohttp import AiohttpService
-from avilla.onebot.config import OnebotWsClientConfig
-from avilla.onebot.protocol import OnebotProtocol
-from avilla.onebot.service import OnebotService
-from avilla.core.selectors import entity
 from graia.saya import Saya
 from graia.saya.builtins.broadcast.behaviour import BroadcastBehaviour
+from graia.ariadne.app import Ariadne
+from graia.ariadne.model import MiraiSession
+from config import init_config
 
 
 loop = asyncio.new_event_loop()
 broadcast = Broadcast(loop=loop)
 saya = Saya(broadcast)
 saya.install_behaviours(BroadcastBehaviour(broadcast))
+config = init_config("./config/config.yml")
 
 with saya.module_context():
-    saya.require("module.sign_in")
+    saya.require("module.furbot")
+    saya.require("module.status")
+    saya.require("module.broadcast_event")
+    saya.require("module.github")
 
-avilla = Avilla(
+ariadne = Ariadne(
     broadcast=broadcast,
-    protocols=[OnebotProtocol],
-    services=[
-        AiohttpService(ClientSession(loop=loop)),
-    ],
-    config={
-        OnebotService: {
-            entity.account["2954819930"]: OnebotWsClientConfig(
-                url=URL("ws://localhost:6700/"), access_token=None
-            )
-        }
-    },
+    connect_info=MiraiSession(
+        config.mirai.host, config.mirai.account, config.mirai.authKey
+    ),
 )
 
 
-loop.run_until_complete(avilla.launch())
+print(broadcast.listeners)
+
+
+ariadne.launch_blocking()

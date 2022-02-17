@@ -1,0 +1,7 @@
+mah:
+  host: "http://localhost:8080"
+  account: 12345678
+  authKey: "12345678"
+FurBot:
+  auth_qq: 
+  auth_key:
