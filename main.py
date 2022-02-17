@@ -18,7 +18,7 @@ with saya.module_context():
     saya.require("module.status")
     saya.require("module.broadcast_event")
     saya.require("module.github")
-
+    saya.require("module.rua")
 ariadne = Ariadne(
     broadcast=broadcast,
     connect_info=MiraiSession(
