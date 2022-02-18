@@ -8,6 +8,7 @@ from graia.ariadne.event.message import (
     FriendEvent,
     GroupMessage,
 )
+from graia.ariadne.event.mirai import BotInvitedJoinGroupRequestEvent
 from graia.ariadne.app import Ariadne
 from graia.ariadne.message.chain import MessageChain
 from graia.ariadne.message.element import Image, Plain
@@ -31,14 +32,15 @@ async def make_msg_for_unknow_exception(event):
         + f"\n异常内容：\n{str(event.exception)}"
         + f"\n异常追踪：\n{tb}"
     )
-    image = await create_image(msg, 200)
+    image = await create_image(msg)
     return MessageChain.create([Plain("发生未捕获的异常\n"), Image(data_bytes=image)])
 
 
-@channel.use(ListenerSchema([ExceptionThrowed]))
-@broadcast.receiver(ExceptionThrowed)
-async def except_handle(app: Ariadne, event: ExceptionThrowed):
-    input("Actived")
+# @channel.use(ListenerSchema([ExceptionThrowed]))
+async def except_handle(event: ExceptionThrowed):
+    app = Ariadne.get_running(Ariadne)
+    if isinstance(event.exception, IndexError):
+        return
     if isinstance(event.event, GroupMessage):
         await app.sendGroupMessage(
             event.event.sender.group, await make_msg_for_unknow_exception(event)
@@ -47,3 +49,8 @@ async def except_handle(app: Ariadne, event: ExceptionThrowed):
         await app.sendFriendMessage(
             event.event.sender, await make_msg_for_unknow_exception(event)
         )
+
+
+@channel.use(ListenerSchema([BotInvitedJoinGroupRequestEvent]))
+async def group_invite_handle(app: Ariadne, event: BotInvitedJoinGroupRequestEvent):
+    await event.accept()

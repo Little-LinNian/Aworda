@@ -19,6 +19,11 @@ with saya.module_context():
     saya.require("module.broadcast_event")
     saya.require("module.github")
     saya.require("module.rua")
+    saya.require("module.aword")
+    saya.require("module.cdsm")
+    saya.require("module.sign_in")
+    saya.require("module.dujitang")
+
 ariadne = Ariadne(
     broadcast=broadcast,
     connect_info=MiraiSession(
@@ -28,6 +33,5 @@ ariadne = Ariadne(
 
 
 print(broadcast.listeners)
-
 
 ariadne.launch_blocking()

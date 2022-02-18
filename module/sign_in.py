@@ -22,14 +22,14 @@ SOFTWARE.
 """
 
 from pathlib import Path
-from avilla.core.selectors import message
 from graia.saya import Saya, Channel
 from graia.saya.builtins.broadcast.schema import ListenerSchema
-from avilla.core.relationship import Relationship
-import asyncio
-from avilla.core.message import Message, MessageChain
-from avilla.core.elements import Image as IMG, Text
-from avilla.core.event.message import MessageReceived
+from graia.ariadne.app import Ariadne
+
+from graia.ariadne.event.message import GroupMessage
+from graia.ariadne.model import Group, Member
+from graia.ariadne.message.chain import MessageChain
+from graia.ariadne.message.element import Image as IMG, Plain as Text
 
 saya = Saya.current()
 channel = Channel.current()
@@ -38,7 +38,6 @@ import datetime
 import os
 import random
 from enum import Enum
-from avilla.core.execution import MessageSend
 from io import BytesIO
 import httpx
 from dateutil.parser import parse
@@ -76,17 +75,17 @@ hitokotoArchiveOpen = True
 # ==========================================
 
 
-@channel.use(ListenerSchema(listening_events=[MessageReceived]))
-async def sendmsg(rs: Relationship, msg: Message):
-    if int(rs.mainline.path["group"]) in blockGroupNumber:
+@channel.use(ListenerSchema(listening_events=[GroupMessage]))
+async def sendmsg(app: Ariadne, msg: MessageChain, group: Group, member: Member):
+    if group.id in blockGroupNumber:
         return
-    if not msg.content.as_display() == "签到":
+    if not msg.asDisplay() == "签到":
         return
-    userQQ = int(rs.ctx.path["member"])
-    _msg = msg.content.as_display()
-    nickname = await rs.meta.get("member.name")
-    resp = await asyncio.to_thread(mainProgram, _msg, userQQ, nickname)
-    await rs.exec(MessageSend(resp)).to(rs.mainline)
+    userQQ = member.id
+    msg = msg.asDisplay()
+    nickname = member.name
+    resp = await mainProgram(msg, userQQ, nickname)
+    await app.sendGroupMessage(group.id, resp)
 
 
 class Status(Enum):
@@ -632,16 +631,18 @@ class TimeUtils:
 login_list = []
 
 
-def mainProgram(msg, userQQ, nickname):
+async def mainProgram(msg, userQQ, nickname):
     # Matching method one
     exactMatch = Tools.commandMatch(msg, commandList)
     if exactMatch:
         result = processing(userQQ, nickname)
         if not result == Status.FAILURE:
-            resp = MessageChain([IMG(f"{RESOURCES_BASE_PATH}/cache/{userQQ}.png")])
+            resp = MessageChain.create(
+                [IMG(path=f"{RESOURCES_BASE_PATH}/cache/{userQQ}.png")]
+            )
             return resp
         else:
-            resp = MessageChain([Text("也许你今天已经签过到了")])
+            resp = MessageChain.create([Text("也许你今天已经签过到了")])
             return resp
 
 
