@@ -15,6 +15,7 @@ from arclet.alconna import change_help_send_action
 from playwright.async_api import async_playwright
 from io import BytesIO
 from utils import text2image
+from exception import 又想注入啊
 import asyncio
 import aiofiles
 
@@ -54,8 +55,6 @@ async def sendMsg(app: Ariadne, group: Group, path: str):
 
 subcmd_repo = Subcommand(
     "repo",
-    args=Args["repo":str:"repository"],
-    option=[
         Option("--issues", Args["issue":str:"issues_id"]).help(
             "获取仓库 issues 默认为无 可指定issues id"
         ),
@@ -66,7 +65,7 @@ subcmd_repo = Subcommand(
             "配合 codeview 使用，指定分支 默认为 main"
         ),
         Option("--codeview", Args["path":str:"file_path"]).help("预览 path"),
-    ],
+    args=Args["repo":str:"repository"],
 ).help("查看github仓库")
 alconna = Alconna(
     command="github",
@@ -146,6 +145,6 @@ async def user(app: Ariadne, arp: Arpamar, group: Group):
         try:
             assert slashCount == 0
             assert len(arp.options) == 0
-        except:
-            return
+        except AssertionError:
+            raise 又想注入啊("又想注入啊")
         await sendMsg(app, group, name)

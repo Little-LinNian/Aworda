@@ -23,7 +23,7 @@ with saya.module_context():
     saya.require("module.cdsm")
     saya.require("module.sign_in")
     saya.require("module.dujitang")
-
+    saya.require("module.yingyu")
 ariadne = Ariadne(
     broadcast=broadcast,
     connect_info=MiraiSession(

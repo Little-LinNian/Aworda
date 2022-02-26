@@ -36,7 +36,7 @@ async def make_msg_for_unknow_exception(event):
     return MessageChain.create([Plain("发生未捕获的异常\n"), Image(data_bytes=image)])
 
 
-# @channel.use(ListenerSchema([ExceptionThrowed]))
+@channel.use(ListenerSchema([ExceptionThrowed]))
 async def except_handle(event: ExceptionThrowed):
     app = Ariadne.get_running(Ariadne)
     if isinstance(event.exception, IndexError):

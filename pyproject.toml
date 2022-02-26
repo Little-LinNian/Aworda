@@ -21,6 +21,7 @@ graia-broadcast = "^0.15.6"
 aiofiles = "^0.8.0"
 arclet-alconna = "^0.6.1"
 ujson = "^5.1.0"
+yinglish = "^1.0.1"
 
 
 [tool.poetry.dev-dependencies]
