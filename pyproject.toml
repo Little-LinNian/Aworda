@@ -7,21 +7,25 @@ authors = ["Your Name <you@example.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 aiohttp = "^3.8.1"
-starlette = "^0.18.0"
+starlette = "0.17.1"
 pillow = "^9.0.0"
 loguru = "^0.6.0"
 playwright = "^1.18.2"
-graia-saya = "^0.0.14"
+graia-saya = "^0.0.15"
 httpx = "^0.22.0"
 python-dateutil = "^2.8.2"
 black = "^22.1.0"
-graia-ariadne = "^0.5.3"
+graia-ariadne = "^0.6.11"
 psutil = "^5.9.0"
-graia-broadcast = "^0.15.6"
+graia-broadcast = "^0.16.1"
 aiofiles = "^0.8.0"
-arclet-alconna = "^0.6.1"
 ujson = "^5.1.0"
 yinglish = "^1.0.1"
+uvicorn = "^0.17.6"
+fastapi = "^0.75.0"
+graia-scheduler = "^0.0.7"
+arclet-alconna = "^0.8.0"
+arclet-alconna-graia = "^0.0.7"
 
 
 [tool.poetry.dev-dependencies]
@@ -32,6 +36,6 @@ build-backend = "poetry.core.masonry.api"
 
 [[tool.poetry.source]]
 name = "tencent-cloud"
-default = false
+default = true
 url = "https://mirrors.cloud.tencent.com/pypi/simple"
 

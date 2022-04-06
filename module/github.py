@@ -1,4 +1,4 @@
-from arclet.alconna.component import Arpamar
+from arclet.alconna.arpamar import Arpamar
 from arclet.alconna.types import Empty
 from graia.ariadne.app import Ariadne
 from graia.ariadne.message.chain import MessageChain
@@ -11,7 +11,6 @@ from graia.ariadne.message.parser.alconna import AlconnaDispatcher
 from loguru import logger
 from arclet.alconna import Alconna, Option, Subcommand
 from arclet.alconna import Args
-from arclet.alconna import change_help_send_action
 from playwright.async_api import async_playwright
 from io import BytesIO
 from utils import text2image
@@ -23,8 +22,9 @@ github_url = "https://hub.xn--gzu630h.xn--kpry57d/"
 
 
 async def shot_github(path: str):
+    """"""
     async with async_playwright() as pw:
-        browser = await pw.chromium.launch()
+        browser = await pw.firefox.launch()
         page = await browser.new_page()
         try:
             await asyncio.wait_for(page.goto(github_url + path), timeout=30)
@@ -55,47 +55,45 @@ async def sendMsg(app: Ariadne, group: Group, path: str):
 
 subcmd_repo = Subcommand(
     "repo",
-        Option("--issues", Args["issue":str:"issues_id"]).help(
-            "获取仓库 issues 默认为无 可指定issues id"
+    [
+        Option(
+            "--issues",
+            Args["issue":str:"issues_id"],
+            help_text="获取仓库 issues 默认为无 可指定issues id",
         ),
-        Option("--pulls", Args["pull":str:"pulls_id"]).help(
-            "获取仓库 pull requests 默认为无 可指定 pulls id"
+        Option(
+            "--pulls",
+            Args["pull":str:"pulls_id"],
+            help_text="获取仓库 pull requests 默认为无 可指定 pulls id",
         ),
-        Option("--branch", Args["branch":str:"main"]).help(
-            "配合 codeview 使用，指定分支 默认为 main"
+        Option(
+            "--branch",
+            Args["branch":str:"main"],
+            help_text="配合 codeview 使用，指定分支 默认为 main",
         ),
-        Option("--codeview", Args["path":str:"file_path"]).help("预览 path"),
+        Option("--codeview", Args["path":str:"file_path"], help_text="预览 path"),
+    ],
     args=Args["repo":str:"repository"],
-).help("查看github仓库")
+    help_text="查看github仓库",
+)
 alconna = Alconna(
     command="github",
     headers=["#"],
     main_args=Args["username":str],
     options=[subcmd_repo],
-).help("github截图机xxxx")
+    help_text="github截图机xxxx",
+)
 
 channel = Channel.current()
 
 
 @channel.use(
     ListenerSchema(
-        [GroupMessage], inline_dispatchers=[AlconnaDispatcher(alconna=alconna)]
-    )
-)
-async def repository(msg: MessageChain, app: Ariadne, arp: Arpamar, group: Group):
-    if "--help" in msg.asDisplay().split(" "):
-        image = await text2image.create_image(alconna.get_help())
-        await app.sendGroupMessage(group, MessageChain.create(Image(data_bytes=image)))
-        return
-
-
-@channel.use(
-    ListenerSchema(
-        [GroupMessage], inline_dispatchers=[AlconnaDispatcher(alconna=alconna)]
+        [GroupMessage],
+        inline_dispatchers=[AlconnaDispatcher(alconna=alconna, help_flag="post")],
     )
 )
 async def repository_repo(msg: MessageChain, app: Ariadne, arp: Arpamar, group: Group):
-
     if arp.matched and arp.has("repo"):
         username = arp.main_args.get("username")
         repo = arp.get("repo")
@@ -134,7 +132,7 @@ async def repository_repo(msg: MessageChain, app: Ariadne, arp: Arpamar, group: 
 
 @channel.use(
     ListenerSchema(
-        [GroupMessage], inline_dispatchers=[AlconnaDispatcher(alconna=alconna)]
+        [GroupMessage], inline_dispatchers=[AlconnaDispatcher(alconna=alconna,help_flag="stay")]
     )
 )
 async def user(app: Ariadne, arp: Arpamar, group: Group):
@@ -144,7 +142,8 @@ async def user(app: Ariadne, arp: Arpamar, group: Group):
         slashCount = countSlash(name)
         try:
             assert slashCount == 0
-            assert len(arp.options) == 0
+            if not len(arp.subcommands) == 0:
+                return
         except AssertionError:
             raise 又想注入啊("又想注入啊")
         await sendMsg(app, group, name)

@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 config/config.yml
+resource/sign-in/cache/
+resource/sign-in/user/
 *cache.json
 cache/
 # Distribution / packaging

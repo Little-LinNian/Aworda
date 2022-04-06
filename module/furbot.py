@@ -27,6 +27,7 @@ class FurPic(BaseModel):
 
 @channel.use(ListenerSchema([GroupMessage]))
 async def on_message(app: Ariadne, group: Group, message: MessageChain):
+    """根据 毛毛名字 查询毛毛图片"""
     if message.asDisplay().startswith("#来只 "):
         content = message.asDisplay()[4:]
         sign: str = f"api/v2/getFursuitByName-{int(time())}-{CONFIG.furbot.auth_key}"

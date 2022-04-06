@@ -27,6 +27,8 @@ def general_system_status() -> str:
     内存总空间：{psutil.virtual_memory().total/1024/1024/1024}GB
     NetIO：{psutil.net_io_counters()}
     DiskIO：{psutil.disk_io_counters()}
+    TCP连接数：{len(psutil.net_connections(kind='tcp'))}
+    UDP连接数：{len(psutil.net_connections(kind='udp'))}
     """
     return status
 
