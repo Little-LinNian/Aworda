@@ -26,6 +26,9 @@ fastapi = "^0.75.0"
 graia-scheduler = "^0.0.7"
 arclet-alconna = "^0.8.0"
 arclet-alconna-graia = "^0.0.7"
+mkdocs-material = "^8.2.8"
+beanie = "^1.10.8"
+wordcloud = "^1.8.1"
 
 
 [tool.poetry.dev-dependencies]

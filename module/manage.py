@@ -1,7 +1,7 @@
 from arclet.alconna import manager
 from arclet.alconna.arpamar import Arpamar
 from arclet.alconna.base import ArgUnit, Args
-from arclet.alconna.component import Option
+from arclet.alconna.main import Option
 from arclet.alconna.main import Alconna
 from graia.ariadne.event.message import GroupMessage
 from graia.ariadne.model import Member, Group

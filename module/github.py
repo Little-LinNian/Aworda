@@ -82,6 +82,7 @@ alconna = Alconna(
     main_args=Args["username":str],
     options=[subcmd_repo],
     help_text="github截图机xxxx",
+    is_fuzzy_match=True,
 )
 
 channel = Channel.current()
@@ -132,7 +133,8 @@ async def repository_repo(msg: MessageChain, app: Ariadne, arp: Arpamar, group: 
 
 @channel.use(
     ListenerSchema(
-        [GroupMessage], inline_dispatchers=[AlconnaDispatcher(alconna=alconna,help_flag="stay")]
+        [GroupMessage],
+        inline_dispatchers=[AlconnaDispatcher(alconna=alconna, help_flag="stay")],
     )
 )
 async def user(app: Ariadne, arp: Arpamar, group: Group):

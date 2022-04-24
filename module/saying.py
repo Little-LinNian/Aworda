@@ -16,7 +16,7 @@ channel = Channel.current()
 
 
 @channel.use(ListenerSchema([GroupMessage]))
-async def eat(app: Ariadne, group: Group,msg: MessageChain):
+async def eat(app: Ariadne, group: Group, msg: MessageChain):
     """
     async with aiofiles.open("resource/linnian.json", mode="r") as f:
         data = await f.read()
@@ -44,9 +44,8 @@ async def eat(app: Ariadne, group: Group,msg: MessageChain):
             '"时间，雨水，霖念。。。。。是什么。。。。。"',
             '"什么时候，才会看到尽头"',
             '"没有人会看到和海洋融为一体的雨水龙对吧"',
-
-            ],
-        }
+        ],
+    }
     if msg.asDisplay() == "也许":
         await app.sendGroupMessage(
             group, MessageChain.create(random.choice(data["emo"]))
