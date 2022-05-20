@@ -79,7 +79,7 @@ hitokotoArchiveOpen = True
 async def sendmsg(app: Ariadne, msg: MessageChain, group: Group, member: Member):
     if group.id in blockGroupNumber:
         return
-    if not msg.asDisplay() == "签到":
+    if msg.asDisplay() != "签到":
         return
     userQQ = member.id
     msg = msg.asDisplay()
@@ -302,8 +302,7 @@ class SignIn(User):
 
     @staticmethod
     def getPictures(url):
-        img = Network.getBytes(url)
-        return img
+        return Network.getBytes(url)
 
     def createAvatar(self):
         size = self._basemapSize
@@ -577,16 +576,16 @@ class TimeUtils:
     @staticmethod
     def getTheCurrentTime():
         """%Y-%m-%d 格式的日期"""
-        nowDate = str(datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"))
-        return nowDate
+        return str(datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d"))
 
     @staticmethod
     def getAccurateTimeNow():
         """%Y-%m-%d/%H:%M:%S 格式的日期"""
-        nowDate = str(
-            datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d/%H:%M:%S")
+        return str(
+            datetime.datetime.strftime(
+                datetime.datetime.now(), "%Y-%m-%d/%H:%M:%S"
+            )
         )
-        return nowDate
 
     @classmethod
     def judgeTimeDifference(cls, lastTime):
@@ -615,15 +614,16 @@ class TimeUtils:
         if model == cls.ALL:
             return {
                 cls.DAY: int((b - a).days),
-                cls.HOUR: int(seconds / 3600),
-                cls.MINUTE: int((seconds % 3600) / 60),  # The rest
-                cls.SECOND: int(seconds % 60),  # The rest
+                cls.HOUR: seconds // 3600,
+                cls.MINUTE: int((seconds % 3600) / 60),
+                cls.SECOND: int(seconds % 60),
             }
+
         if model == cls.DAY:
             b = parse(cls.getTheCurrentTime())
             return int((b - a).days)
         if model == cls.MINUTE:
-            return int(seconds / 60)
+            return seconds // 60
         if model == cls.SECOND:
             return seconds
 
@@ -632,18 +632,15 @@ login_list = []
 
 
 async def mainProgram(msg, userQQ, nickname):
-    # Matching method one
-    exactMatch = Tools.commandMatch(msg, commandList)
-    if exactMatch:
+    if exactMatch := Tools.commandMatch(msg, commandList):
         result = processing(userQQ, nickname)
-        if not result == Status.FAILURE:
-            resp = MessageChain.create(
+        return (
+            MessageChain.create(
                 [IMG(path=f"{RESOURCES_BASE_PATH}/cache/{userQQ}.png")]
             )
-            return resp
-        else:
-            resp = MessageChain.create([Text("也许你今天已经签过到了")])
-            return resp
+            if result != Status.FAILURE
+            else MessageChain.create([Text("也许你今天已经签过到了")])
+        )
 
 
 def randomFavorability(original):
@@ -678,11 +675,11 @@ def generatePicture(userQQ, nickname, favorability, days, hitokoto):
     result = SignIn(userQQ, nickname, favorability, days, hitokoto).drawing()
     if result == Status.FAILURE:
         return result
-    if highQuality:
-        path = f"{RESOURCES_BASE_PATH}/cache/{userQQ}.png"
-    else:
-        path = f"{RESOURCES_BASE_PATH}/cache/{userQQ}.jpg"
-    return path
+    return (
+        f"{RESOURCES_BASE_PATH}/cache/{userQQ}.png"
+        if highQuality
+        else f"{RESOURCES_BASE_PATH}/cache/{userQQ}.jpg"
+    )
 
 
 def getUserInfo(userQQ):
@@ -700,10 +697,7 @@ def processing(userQQ, nickname):
         return Status.FAILURE
     # Start getting hitokoto
     global hitokotoOpen, noHitokoto
-    if hitokotoOpen:
-        hitokoto = Hitokoto.hitokoto()
-    else:
-        hitokoto = noHitokoto
+    hitokoto = Hitokoto.hitokoto() if hitokotoOpen else noHitokoto
     # Start drawing
     userInfo = getUserInfo(userQQ)
     result = generatePicture(

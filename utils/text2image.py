@@ -31,10 +31,10 @@ def _cache(text: str, cut: int) -> bytes:
     cache_file = cache.joinpath(f"{str_hash[:2]}", f"{str_hash}.jpg")
     if cache_file.exists():
         logger.info(f"T2I Cache hit: {str_hash}")
-        return cache_file.read_bytes()
     else:
         cache_file.write_bytes(_create_image(text, cut))
-        return cache_file.read_bytes()
+
+    return cache_file.read_bytes()
 
 
 def _create_image(text: str, cut: int) -> bytes:

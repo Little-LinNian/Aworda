@@ -90,7 +90,7 @@ async def group_message_handle(
         message=msg.asPersistentString(binary=False),
         time=datetime.now(),
     ).insert()
-    logger.success(f"[Database] Message has been saved to database")
+    logger.success("[Database] Message has been saved to database")
 
 
 @channel.use(ListenerSchema([FriendMessage]))
@@ -103,7 +103,7 @@ async def friend_message_handle(app: Ariadne, friend: Friend, msg: MessageChain)
         message=msg.asPersistentString(binary=False),
         time=datetime.now(),
     ).insert()
-    logger.success(f"[Database] Message has been saved to database")
+    logger.success("[Database] Message has been saved to database")
 
 
 @channel.use(ListenerSchema([NudgeEvent]))

@@ -15,11 +15,10 @@ hitokoto_api = "https://v1.hitokoto.cn/"
 async def get_hitokoto():
     async with aiohttp.ClientSession() as session:
         async with session.get(hitokoto_api) as resp:
-            if resp.status == 200:
-                data = await resp.json()
-                return data["hitokoto"]
-            else:
+            if resp.status != 200:
                 return "获取失败"
+            data = await resp.json()
+            return data["hitokoto"]
 
 
 channel = Channel.current()
