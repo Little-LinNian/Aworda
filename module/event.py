@@ -93,7 +93,7 @@ async def group_message_handle(
         message=msg.asPersistentString(binary=False),
         time=datetime.now(),
     ).insert()
-    logger.success(f"[Database] Message has been saved to database")
+    logger.success("[Database] Message has been saved to database")
 
 
 @channel.use(ListenerSchema([FriendMessage]))
@@ -106,7 +106,7 @@ async def friend_message_handle(app: Ariadne, friend: Friend, msg: MessageChain)
         message=msg.asPersistentString(binary=False),
         time=datetime.now(),
     ).insert()
-    logger.success(f"[Database] Message has been saved to database")
+    logger.success("[Database] Message has been saved to database")
 
 
 @channel.use(ListenerSchema([NudgeEvent]))
@@ -131,8 +131,8 @@ async def get_help(app: Ariadne, group: Group):
 
 @channel.use(ListenerSchema([GroupMessage], decorators=[DetectPrefix("#循环十遍@")]))
 async def _(app: Ariadne, msg: MessageChain, group: Group, member: Member):
-    if not member.id == 2544704967:
+    if member.id != 2544704967:
         return
     at = msg.getFirst(At)
-    for i in range(10):
+    for _ in range(10):
         await app.sendGroupMessage(group, MessageChain.create(At(target=at.target)))

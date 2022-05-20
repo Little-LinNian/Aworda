@@ -21,7 +21,7 @@ channel = Channel.current()
 
 @channel.use(ListenerSchema([GroupMessage], decorators=[MatchContent("mkdocs!")]))
 async def eat(app: Ariadne, group: Group, member: Member):
-    if not member.id == 2544704967:
+    if member.id != 2544704967:
         return
     await app.sendGroupMessage(group, MessageChain.create("Making docs..."))
     cmd = "cd docs && mkdocs build && coscmd upload -r site/ / -r"

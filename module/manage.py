@@ -90,36 +90,37 @@ class SayaManager:
 async def sayaM(
     app: Ariadne, dup: SayaManage, group: Group, member: Member, arp: Arpamar
 ):
-    if arp.matched:
-        if not member.id == 2544704967:
-            await app.sendGroupMessage(
-                group, MessageChain.create([Plain("你不是超级管理员，无法使用该命令")])
-            )
-            return
-        manager = SayaManager()
-        if dup.安装.available:
-            arg = dup.安装.args[0]
-            await app.sendGroupMessage(
-                group, MessageChain.create([Plain(manager.install(arg))])
-            )
-        if dup.卸载.available:
-            arg = dup.卸载.args[0]
-            await app.sendGroupMessage(
-                group, MessageChain.create([Plain(manager.uninstall(arg))])
-            )
-        if dup.重载.available:
-            arg = dup.重载.args[0]
-            await app.sendGroupMessage(
-                group, MessageChain.create([Plain(manager.reload(arg))])
-            )
-        if dup.查看所有模组.available:
-            await app.sendGroupMessage(
-                group,
-                MessageChain.create(
-                    [Image(data_bytes=await create_image(manager.module_list()))]
-                ),
-            )
-        if dup.重载所有.available:
-            await app.sendGroupMessage(
-                group, MessageChain.create([Image(data_bytes=await create_image(manager.reload_all()))])
-            )
+    if not arp.matched:
+        return
+    if member.id != 2544704967:
+        await app.sendGroupMessage(
+            group, MessageChain.create([Plain("你不是超级管理员，无法使用该命令")])
+        )
+        return
+    manager = SayaManager()
+    if dup.安装.available:
+        arg = dup.安装.args[0]
+        await app.sendGroupMessage(
+            group, MessageChain.create([Plain(manager.install(arg))])
+        )
+    if dup.卸载.available:
+        arg = dup.卸载.args[0]
+        await app.sendGroupMessage(
+            group, MessageChain.create([Plain(manager.uninstall(arg))])
+        )
+    if dup.重载.available:
+        arg = dup.重载.args[0]
+        await app.sendGroupMessage(
+            group, MessageChain.create([Plain(manager.reload(arg))])
+        )
+    if dup.查看所有模组.available:
+        await app.sendGroupMessage(
+            group,
+            MessageChain.create(
+                [Image(data_bytes=await create_image(manager.module_list()))]
+            ),
+        )
+    if dup.重载所有.available:
+        await app.sendGroupMessage(
+            group, MessageChain.create([Image(data_bytes=await create_image(manager.reload_all()))])
+        )

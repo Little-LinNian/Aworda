@@ -38,14 +38,14 @@ async def drink(app: Ariadne, group: Group):
 @channel.use(ListenerSchema([GroupMessage], decorators=[DetectPrefix("showtime")]))
 async def showtime(app: Ariadne, group: Group, msg: MessageChain):
     ats = msg.get(At)
-    forwards = []
-    forwards.append(
+    forwards = [
         ForwardNode(
             target=await app.getMember(group, ats[0].target),
             time=datetime.now(),
             message=MessageChain.create(At(ats[1].target), Plain(" 傻逼")),
         )
-    )
+    ]
+
     forwards.append(
         ForwardNode(
             target=await app.getMember(group, ats[1].target),

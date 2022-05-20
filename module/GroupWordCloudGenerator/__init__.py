@@ -117,9 +117,7 @@ async def member_wordcloud_generator_today(
 
 
 def pre_deal(messages):
-    content = []
-    for message in messages:
-        content.append(message.messageChain)
+    content = [message.messageChain for message in messages]
     msg_count = len(messages)
     plains = []
     for message in content:

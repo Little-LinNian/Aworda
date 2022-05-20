@@ -16,10 +16,7 @@ dujitang_api = "https://du.shadiao.app/api.php"
 async def get_djt():
     async with aiohttp.ClientSession() as session:
         async with session.get(dujitang_api) as resp:
-            if resp.status == 200:
-                return await resp.text()
-            else:
-                return "获取失败xw"
+            return await resp.text() if resp.status == 200 else "获取失败xw"
 
 
 channel = Channel.current()

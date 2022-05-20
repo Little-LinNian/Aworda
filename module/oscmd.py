@@ -20,7 +20,7 @@ channel = Channel.current()
 
 @channel.use(ListenerSchema([GroupMessage], decorators=[DetectPrefix("#sh")]))
 async def hitokoto(app: Ariadne, group: Group, member: Member, msg: MessageChain):
-    if not member.id == 2544704967:
+    if member.id != 2544704967:
         await app.sendGroupMessage(group, MessageChain.create("您无权使用此功能"))
         return
     cmd = msg.asDisplay().removeprefix("#sh ")

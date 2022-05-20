@@ -27,8 +27,7 @@ def image_to_byte_array(image: Image):
 def im_2_b64(image):
     buff = io.BytesIO()
     image.save(buff, format="PNG")
-    img_str = base64.b64encode(buff.getvalue())
-    return img_str
+    return base64.b64encode(buff.getvalue())
 
 
 def draw_subtitle(im, text: str):

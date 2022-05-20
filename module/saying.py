@@ -50,7 +50,7 @@ async def eat(app: Ariadne, group: Group, msg: MessageChain):
         await app.sendGroupMessage(
             group, MessageChain.create(random.choice(data["emo"]))
         )
-    if 44 == random.randint(1, 150):
+    if random.randint(1, 150) == 44:
         await app.sendGroupMessage(
             group, MessageChain.create(random.choice(data["emo"]))
         )
