@@ -4,12 +4,11 @@ import string
 
 def numf(num: int):
     if num < 10000:
-        view = str(num)
+        return str(num)
     elif num < 100000000:
-        view = ("%.2f" % (num / 10000)) + "万"
+        return ("%.2f" % (num / 10000)) + "万"
     else:
-        view = ("%.2f" % (num / 100000000)) + "亿"
-    return view
+        return ("%.2f" % (num / 100000000)) + "亿"
 
 
 def get_cut_str(str, cut):
@@ -25,10 +24,7 @@ def get_cut_str(str, cut):
     while re.search(r"\n\n\n\n\n", next_str):
         next_str = re.sub(r"\n\n\n\n\n", "\n", next_str)
     for s in next_str:
-        if s in string.printable:
-            si += 1
-        else:
-            si += 2
+        si += 1 if s in string.printable else 2
         i += 1
         if next_str == "":
             break
@@ -68,13 +64,10 @@ def getCutStr(str, cut):
     si = 0
     i = 0
     for s in str:
-        if "\u4e00" <= s <= "\u9fff":
-            si += 2
-        else:
-            si += 1
+        si += 2 if "\u4e00" <= s <= "\u9fff" else 1
         i += 1
         if si > cut:
-            cutStr = str[:i] + "...."
+            cutStr = f"{str[:i]}...."
             break
         else:
             cutStr = str

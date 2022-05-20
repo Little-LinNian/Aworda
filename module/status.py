@@ -15,7 +15,7 @@ channel = Channel.current()
 
 
 def general_system_status() -> str:
-    status = f"""
+    return f"""
     系统状态
     内存：{psutil.virtual_memory().percent}%
     CPU：{psutil.cpu_percent()}%
@@ -30,7 +30,6 @@ def general_system_status() -> str:
     TCP连接数：{len(psutil.net_connections(kind='tcp'))}
     UDP连接数：{len(psutil.net_connections(kind='udp'))}
     """
-    return status
 
 
 @channel.use(ListenerSchema([GroupMessage]))

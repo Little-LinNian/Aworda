@@ -6,7 +6,7 @@ from sanic.response import raw
 app = Sanic(name="nokia")
 
 PRODUCTION = bool(os.environ.get("PRODUCTION"))
-debug = False if PRODUCTION else True
+debug = not PRODUCTION
 workers = 1 if debug else os.cpu_count()
 
 

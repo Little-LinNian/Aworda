@@ -35,8 +35,7 @@ async def shot_github(path: str):
         with BytesIO() as buffer:
             buffer.write(await page.screenshot(full_page=True))
             await browser.close()
-            msgChain = MessageChain.create(Image(data_bytes=buffer.getvalue()))
-            return msgChain
+            return MessageChain.create(Image(data_bytes=buffer.getvalue()))
 
 
 def countSlash(path: str):
@@ -99,40 +98,41 @@ channel = Channel.current()
     )
 )
 async def repository_repo(msg: MessageChain, app: Ariadne, arp: Arpamar, group: Group):
-    if arp.matched and arp.find("repo"):
-        username = arp.main_args.get("username")
-        repo = arp.query("repo")
-        reponame = repo.get("repo")
-        basepath = username + "/" + reponame
-        logger.success(arp)
-        if "issues" in repo:
-            issue = repo.get("issues").get("issue")
-            if issue == "issues_id":
-                await sendMsg(app, group, basepath + "/issues")
-            else:
-                await sendMsg(app, group, basepath + "/issues/" + issue)
+    if not arp.matched or not arp.find("repo"):
+        return
+    username = arp.main_args.get("username")
+    repo = arp.query("repo")
+    reponame = repo.get("repo")
+    basepath = f"{username}/{reponame}"
+    logger.success(arp)
+    if "issues" in repo:
+        issue = repo.get("issues").get("issue")
+        if issue == "issues_id":
+            await sendMsg(app, group, f"{basepath}/issues")
+        else:
+            await sendMsg(app, group, f"{basepath}/issues/{issue}")
+        return
+    elif "pulls" in repo:
+        pull = repo.get("pulls").get("pull")
+        if pull == "pulls_id":
+            await sendMsg(app, group, f"{basepath}/pulls")
+        else:
+            await sendMsg(app, group, f"{basepath}/pulls/{pull}")
+        return
+    elif "codeview" in repo:
+        path = repo.get("codeview").get("path")
+        try:
+            branch = repo.get("branch").get("branch")
+        except:
+            branch = "main"
+        await sendMsg(app, group, f"{basepath}/blob/{branch}/{path}")
+        return
+    if countSlash(basepath) == 1:
+        if repo.get("repo") == "repository":
+            await sendMsg(app, group, f"{username}?tab=repositories")
             return
-        elif "pulls" in repo:
-            pull = repo.get("pulls").get("pull")
-            if pull == "pulls_id":
-                await sendMsg(app, group, basepath + "/pulls")
-            else:
-                await sendMsg(app, group, basepath + "/pulls/" + pull)
-            return
-        elif "codeview" in repo:
-            path = repo.get("codeview").get("path")
-            try:
-                branch = repo.get("branch").get("branch")
-            except:
-                branch = "main"
-            await sendMsg(app, group, basepath + "/blob/" + branch + "/" + path)
-            return
-        if countSlash(basepath) == 1:
-            if "repository" == repo.get("repo"):
-                await sendMsg(app, group, username + "?tab=repositories")
-                return
-            await sendMsg(app, group, basepath)
-            return
+        await sendMsg(app, group, basepath)
+        return
 
 
 @channel.use(
@@ -148,7 +148,7 @@ async def user(app: Ariadne, arp: Arpamar, group: Group):
         slashCount = countSlash(name)
         try:
             assert slashCount == 0
-            if not len(arp.subcommands) == 0:
+            if len(arp.subcommands) != 0:
                 return
         except AssertionError:
             raise 又想注入啊("又想注入啊")

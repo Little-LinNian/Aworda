@@ -53,7 +53,7 @@ async def ghRepo(app: Ariadne, arp: Arpamar, group: Group):
     repo = arp.main_args.get("repo")
     if not isinstance(repo, str):
         return
-    if not repo.count("/") == 1:
+    if repo.count("/") != 1:
         await app.sendGroupMessage(
             group, MessageChain.create("你应该像这样用 < #ghrepo Owner/Repo >")
         )
@@ -61,7 +61,7 @@ async def ghRepo(app: Ariadne, arp: Arpamar, group: Group):
     async with aiohttp.ClientSession() as cs:
         url = github_api + repo
         async with cs.get(url) as r:
-            if not r.status == 200:
+            if r.status != 200:
                 await app.sendGroupMessage(
                     group, MessageChain.create(f"错误惹喵\n{await r.text()}")
                 )
@@ -78,9 +78,10 @@ async def ghRepo(app: Ariadne, arp: Arpamar, group: Group):
                         f"复刻: {data.forks}",
                         f"许可证: {data.license.name}",
                         f" URL: {data.html_url}",
-                        f"喵",
+                        "喵",
                     )
                 )
+
 
                 await app.sendGroupMessage(
                     group,

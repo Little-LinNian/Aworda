@@ -15,7 +15,7 @@ from config import CONFIG
 
 channel = Channel.current()
 
-api: str = f"https://api.tail.icu/"
+api: str = "https://api.tail.icu/"
 
 
 class FurPic(BaseModel):

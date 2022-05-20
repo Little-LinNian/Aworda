@@ -40,6 +40,3 @@ async def rua(app: Ariadne, member: Member, group: Group, msg: MessageChain):
         data = await ruaer(qid)
         ph = Image(data_bytes=data)
         await app.sendGroupMessage(group, MessageChain.create([ph]))
-
-    else:
-        pass
