@@ -20,7 +20,7 @@ async def get_group_history_message(group_id, time_from: datetime, time_to: date
     _message = await GroupHistoryMessage.find(
         GroupHistoryMessage.group == group_id,
         GroupHistoryMessage.time >= time_from,
-        GroupHistoryMessage.time <= time_to
+        GroupHistoryMessage.time <= time_to,
     ).to_list()
     messages: List[GroupHistoryMessage] = []
     for i in _message:
@@ -43,7 +43,7 @@ async def get_private_history_message(user_id, time_from: datetime, time_to: dat
     _message = await PrivateHistoryMessage.find(
         PrivateHistoryMessage.sender == user_id,
         PrivateHistoryMessage.time >= time_from,
-        PrivateHistoryMessage.time <= time_to
+        PrivateHistoryMessage.time <= time_to,
     ).to_list()
     messages: List[PrivateHistoryMessage] = []
     for i in _message:
@@ -70,7 +70,7 @@ async def get_member_history_message(
         GroupHistoryMessage.group == group_id,
         GroupHistoryMessage.sender == user_id,
         GroupHistoryMessage.time >= time_from,
-        GroupHistoryMessage.time <= time_to
+        GroupHistoryMessage.time <= time_to,
     ).to_list()
     messages: List[GroupHistoryMessage] = []
     for i in _message:

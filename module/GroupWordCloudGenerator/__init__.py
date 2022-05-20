@@ -28,6 +28,7 @@ channel = Channel.current()
 global WORKING
 WORKING = False
 
+
 @channel.use(
     ListenerSchema(
         listening_events=[GroupMessage], decorators=[MatchContent("#本群本月词云")]

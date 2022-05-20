@@ -24,11 +24,12 @@ yinglish = "^1.0.1"
 uvicorn = "^0.17.6"
 fastapi = "^0.75.0"
 graia-scheduler = "^0.0.7"
-arclet-alconna = "^0.8.0"
-arclet-alconna-graia = "^0.0.7"
+arclet-alconna = "^0.9.3"
+arclet-alconna-graia = "^0.0.12"
 mkdocs-material = "^8.2.8"
 beanie = "^1.10.8"
 wordcloud = "^1.8.1"
+aiocache = "^0.11.1"
 
 
 [tool.poetry.dev-dependencies]

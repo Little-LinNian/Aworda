@@ -1,8 +1,8 @@
 from arclet.alconna import manager
 from arclet.alconna.arpamar import Arpamar
 from arclet.alconna.base import ArgUnit, Args
-from arclet.alconna.main import Option
-from arclet.alconna.main import Alconna
+from arclet.alconna import Option
+from arclet.alconna import Alconna
 from graia.ariadne.event.message import GroupMessage
 from graia.ariadne.model import Member, Group
 from graia.saya import Saya, Channel
@@ -11,7 +11,8 @@ from graia.ariadne.app import Ariadne
 from graia.ariadne.message.chain import MessageChain
 from graia.ariadne.message.element import Plain, Image
 from graia.ariadne.message.parser.alconna import AlconnaDispatcher
-from arclet.alconna.arpamar.duplication import AlconnaDuplication, OptionStub
+from arclet.alconna.components.duplication import AlconnaDuplication, OptionStub
+from arclet.alconna import command_manager
 from utils.text2image import create_image
 
 channel = Channel.current()
@@ -24,6 +25,7 @@ alc = Alconna(
         Option("安装", Args["模组名":str]),
         Option("卸载", Args["模组名":str]),
         Option("重载", Args["模组名":str]),
+        Option("重载所有"),
         Option("查看所有模组"),
     ],
     help_text="管理小霖念的模组",
@@ -36,6 +38,7 @@ class SayaManage(AlconnaDuplication):
     卸载: OptionStub
     重载: OptionStub
     查看所有模组: OptionStub
+    重载所有: OptionStub
 
 
 class SayaManager:
@@ -45,21 +48,16 @@ class SayaManager:
     def install(self, name):
         if name in saya.channels:
             return "模组已存在"
-        try:
-            with saya.module_context():
+        
+        with saya.module_context():
                 saya.require(name)
-            return "模组安装成功"
-        except Exception as e:
-            return "模组安装失败：" + str(e)
+        return "模组安装成功"
 
     def uninstall(self, name):
         if name not in saya.channels:
             return "模组不存在"
-        try:
-            saya.uninstall_channel(saya.channels.get(name))
-            return "模组卸载成功"
-        except Exception as e:
-            return "模组卸载失败：" + str(e)
+        saya.uninstall_channel(saya.channels.get(name))
+        return "模组卸载成功"
 
     def module_list(self):
         return "模组列表：\n" + "\n".join(saya.channels.keys())
@@ -67,13 +65,21 @@ class SayaManager:
     def reload(self, name):
         if name not in saya.channels:
             return "模组不存在"
-        try:
-            with saya.module_context():
+        with saya.module_context():
                 saya.reload_channel(saya.channels.get(name))
-            return "模组重载成功"
-        except Exception as e:
-            return "模组重载失败：" + str(e)
-
+        return "模组重载成功"
+    def reload_all(self):
+        with saya.module_context():
+                module_reload_status= []
+                channels = list(saya.channels.values())
+                for channel in channels:
+                    try:
+                        if channel == saya.channels.get("module.manage"):
+                            continue
+                        saya.reload_channel(channel)
+                    except Exception as e:
+                        module_reload_status.append(f"{channel.name} 重载失败，错误信息：{e}")
+        return "模组重载成功\n" + "\n".join(module_reload_status)
 
 @channel.use(
     ListenerSchema(
@@ -112,4 +118,8 @@ async def sayaM(
                 MessageChain.create(
                     [Image(data_bytes=await create_image(manager.module_list()))]
                 ),
+            )
+        if dup.重载所有.available:
+            await app.sendGroupMessage(
+                group, MessageChain.create([Image(data_bytes=await create_image(manager.reload_all()))])
             )

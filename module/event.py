@@ -3,6 +3,7 @@ import time
 import traceback
 
 from io import StringIO
+from typing import Deque
 from graia.ariadne.model import Friend, Group, Member
 from graia.ariadne import get_running
 from graia.saya import Saya, Channel
@@ -13,13 +14,15 @@ from graia.ariadne.event.message import (
     GroupMessage,
     MessageEvent,
 )
+from graia.ariadne.message.parser.base import DetectPrefix, MatchContent
 from graia.ariadne.event.mirai import BotInvitedJoinGroupRequestEvent, NudgeEvent
 from graia.ariadne.app import Ariadne
 from graia.ariadne.message.chain import MessageChain
-from graia.ariadne.message.element import Image, Plain, Poke
+from graia.ariadne.message.element import At, Image, Plain, Poke
 from graia.broadcast.builtin.event import ExceptionThrowed
 from graia.ariadne.message.parser.alconna import AlconnaHelpMessage
 from graia.saya.builtins.broadcast.schema import ListenerSchema
+from pydantic.networks import NameEmail
 from database.model import GroupHistoryMessage, PrivateHistoryMessage
 from database.client import get_client
 from beanie import init_beanie
@@ -113,3 +116,23 @@ async def nudge_handle(app: Ariadne, event: NudgeEvent):
             await app.sendNudge(event.supplicant, event.group_id)
         else:
             await app.sendNudge(event.supplicant)
+
+
+help_text = open("help.txt", "r").read()
+
+
+@channel.use(ListenerSchema([GroupMessage], decorators=[MatchContent("菜单")]))
+async def get_help(app: Ariadne, group: Group):
+    image = await create_image(help_text)
+    await app.sendGroupMessage(
+        group, MessageChain.create([Plain("小霖念菜单"), Image(data_bytes=image)])
+    )
+
+
+@channel.use(ListenerSchema([GroupMessage], decorators=[DetectPrefix("#循环十遍@")]))
+async def _(app: Ariadne, msg: MessageChain, group: Group, member: Member):
+    if not member.id == 2544704967:
+        return
+    at = msg.getFirst(At)
+    for i in range(10):
+        await app.sendGroupMessage(group, MessageChain.create(At(target=at.target)))

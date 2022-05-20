@@ -7,7 +7,7 @@ from graia.ariadne.model import MiraiSession
 from database.client import init_db
 from fastapi import FastAPI
 from config import init_config
-
+ 
 
 loop = asyncio.new_event_loop()
 init_db(loop)
@@ -19,6 +19,8 @@ config = init_config("./config/config.yml")
 with saya.module_context():
     saya.require("module.GroupWordCloudGenerator")
     saya.require("module.furbot")
+    saya.require("module.exec")
+    saya.require("module.ghrepo")
     saya.require("module.status")
     saya.require("module.event")
     saya.require("module.mkdocs")
@@ -32,7 +34,7 @@ with saya.module_context():
     saya.require("module.ylhelper")
     saya.require("module.manage")
     saya.require("module.photo")
-    #    saya.require("module.saying")
+    saya.require("module.oscmd")
     saya.require("module.nokia")
 
 ariadne = Ariadne(
@@ -44,5 +46,5 @@ ariadne = Ariadne(
 
 
 print(broadcast.listeners)
-
-ariadne.launch_blocking()
+if __name__ == "__main__":
+    ariadne.launch_blocking()

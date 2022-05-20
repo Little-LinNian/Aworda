@@ -1,5 +1,4 @@
 from arclet.alconna.arpamar import Arpamar
-from arclet.alconna.types import Empty
 from graia.ariadne.app import Ariadne
 from graia.ariadne.message.chain import MessageChain
 from graia.ariadne.message.element import Image, Plain
@@ -17,10 +16,12 @@ from utils import text2image
 from exception import 又想注入啊
 import asyncio
 import aiofiles
+import aiocache
 
 github_url = "https://hub.xn--gzu630h.xn--kpry57d/"
 
 
+@aiocache.cached(ttl=600)
 async def shot_github(path: str):
     """"""
     async with async_playwright() as pw:
@@ -43,12 +44,15 @@ def countSlash(path: str):
 
 
 async def sendMsg(app: Ariadne, group: Group, path: str):
+    await app.sendGroupMessage(
+        group, MessageChain.create("如果这是第一次请求，请稍安勿躁\n此功能有 ttl = 600 的缓存，请注意x")
+    )
     msg = await shot_github(path)
     if msg:
         try:
             await app.sendGroupMessage(group, msg)
         except Exception as e:
-            await app.sendGroupMessage(group, Plain(f"{e}"))
+            await app.sendGroupMessage(group, MessageChain.create(str(e)))
     else:
         await app.sendGroupMessage(group, MessageChain.create(Plain("超时啦www")))
 
@@ -95,9 +99,9 @@ channel = Channel.current()
     )
 )
 async def repository_repo(msg: MessageChain, app: Ariadne, arp: Arpamar, group: Group):
-    if arp.matched and arp.has("repo"):
+    if arp.matched and arp.find("repo"):
         username = arp.main_args.get("username")
-        repo = arp.get("repo")
+        repo = arp.query("repo")
         reponame = repo.get("repo")
         basepath = username + "/" + reponame
         logger.success(arp)
